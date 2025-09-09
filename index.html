@@ -3,7 +3,6 @@
 <head>
     <title>AI Disease Predictor</title>
     <style>
-        /* ===== Base Styling ===== */
         body {
             font-family: "Poppins", Arial, sans-serif;
             text-align: center;
@@ -14,7 +13,6 @@
             justify-content: center;
             align-items: center;
             background: linear-gradient(120deg, #89f7fe, #66a6ff);
-            animation: fadeIn 1.2s ease-in-out;
         }
 
         h2 {
@@ -22,23 +20,18 @@
             margin-bottom: 20px;
             font-size: 30px;
             font-weight: 600;
-            letter-spacing: 1px;
             text-shadow: 0px 2px 5px rgba(0,0,0,0.2);
-            animation: slideDown 1s ease-in-out;
         }
 
-        /* ===== Form Card ===== */
         form {
             background: #ffffff;
             padding: 35px 30px;
             border-radius: 20px;
             box-shadow: 0 12px 35px rgba(0,0,0,0.25);
             width: 320px;
-            animation: popUp 0.8s ease-in-out;
             position: relative;
         }
 
-        /* ===== Input Fields ===== */
         input {
             margin: 8px 0;
             padding: 12px;
@@ -58,7 +51,6 @@
             transform: scale(1.05);
         }
 
-        /* ===== Submit Button ===== */
         button {
             padding: 12px 30px;
             margin-top: 15px;
@@ -78,7 +70,6 @@
             box-shadow: 0 6px 18px rgba(0,0,0,0.25);
         }
 
-        /* ===== Loading Spinner ===== */
         .loader {
             border: 5px solid #f3f3f3;
             border-top: 5px solid #2980b9;
@@ -95,7 +86,6 @@
             100% { transform: rotate(360deg);}
         }
 
-        /* ===== Output Box Styling ===== */
         .output {
             margin-top: 30px;
             padding: 20px;
@@ -108,7 +98,7 @@
             width: 300px;
             margin-left: auto;
             margin-right: auto;
-            animation: glowBox 1.2s ease-in-out, fadeUp 1s ease-in-out;
+            display: none;
         }
 
         .output b {
@@ -116,76 +106,63 @@
             margin-top: 8px;
             font-size: 22px;
             color: #fff;
-            text-shadow: 0px 2px 6px rgba(0,0,0,0.3);
-            animation: typing 2s steps(30, end), blink 0.7s step-end infinite alternate;
-            white-space: nowrap;
-            overflow: hidden;
-            border-right: 3px solid white;
-        }
-
-        /* ===== Animations ===== */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-40px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes popUp {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        @keyframes fadeUp {
-            from { transform: translateY(25px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes glowBox {
-            0% { box-shadow: 0 0 5px #2ecc71, 0 0 10px #27ae60; }
-            50% { box-shadow: 0 0 20px #2ecc71, 0 0 40px #27ae60; }
-            100% { box-shadow: 0 0 5px #2ecc71, 0 0 10px #27ae60; }
-        }
-
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
-        }
-
-        @keyframes blink {
-            from { border-color: transparent }
-            to { border-color: white }
         }
     </style>
 </head>
 <body>
     <div>
         <h2>AI Health Pre-Diagnosis</h2>
-        <form method="POST" onsubmit="showLoader()">
-            {% for i in range(1, 8) %}
-                <input type="text" name="symptom{{i}}" placeholder="Enter Symptom {{i}}"><br>
-            {% endfor %}
+        <form id="predictForm">
+            <input type="text" id="symptom1" placeholder="Enter Symptom 1"><br>
+            <input type="text" id="symptom2" placeholder="Enter Symptom 2"><br>
+            <input type="text" id="symptom3" placeholder="Enter Symptom 3"><br>
+            <input type="text" id="symptom4" placeholder="Enter Symptom 4"><br>
+            <input type="text" id="symptom5" placeholder="Enter Symptom 5"><br>
+            <input type="text" id="symptom6" placeholder="Enter Symptom 6"><br>
+            <input type="text" id="symptom7" placeholder="Enter Symptom 7"><br>
             <button type="submit">Submit</button>
         </form>
 
-        <!-- Loader -->
         <div class="loader" id="loading"></div>
 
-        {% if prediction %}
-            <div class="output">
-                Predicted Disease:
-                <b>{{prediction}}</b>
-            </div>
-        {% endif %}
+        <div class="output" id="resultBox">
+            Predicted Disease:
+            <b id="predictionText"></b>
+        </div>
     </div>
 
     <script>
-        function showLoader() {
+        document.getElementById("predictForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            // Show loader
             document.getElementById("loading").style.display = "block";
-        }
+            document.getElementById("resultBox").style.display = "none";
+
+            setTimeout(function() {
+                // Collect symptoms
+                let symptoms = [];
+                for (let i = 1; i <= 7; i++) {
+                    let val = document.getElementById("symptom" + i).value.toLowerCase();
+                    if (val) symptoms.push(val);
+                }
+
+                // Simple JS rules (demo)
+                let disease = "Unknown Disease";
+                if (symptoms.includes("fever") && symptoms.includes("cough")) {
+                    disease = "Flu";
+                } else if (symptoms.includes("headache") && symptoms.includes("nausea")) {
+                    disease = "Migraine";
+                } else if (symptoms.includes("chest pain")) {
+                    disease = "Heart Issue";
+                }
+
+                // Hide loader and show result
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("resultBox").style.display = "block";
+                document.getElementById("predictionText").innerText = disease;
+            }, 1500); // Simulate AI processing delay
+        });
     </script>
 </body>
 </html>
