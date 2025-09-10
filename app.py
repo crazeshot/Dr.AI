@@ -21,9 +21,13 @@ def home():
         vector = [1 if s in inputs else 0 for s in all_symptoms]
         X = np.array([vector])
 
-        # Predict
-        pred = model.predict(X)[0]
-        prediction = disease_encoder.inverse_transform([pred])[0]
+        # Check if any valid symptom matched
+        if sum(vector) == 0:
+            prediction = "Unknown Disease"
+        else:
+            # Predict
+            pred = model.predict(X)[0]
+            prediction = disease_encoder.inverse_transform([pred])[0]
 
     return render_template("index.html", prediction=prediction)
 
